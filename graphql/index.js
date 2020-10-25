@@ -21,13 +21,21 @@ const typeDefs = gql`
     category: String
   }
 
+  type Bookissued {
+    book_id: String
+    user_id: String
+    date: String
+  }
+
   type Mutation {
     createUser(name: String, email: String, phone: Int): User!
     addBook(name: String, author: String, category: String): Book!
+    issueBook(user_id: String, book_id: String): Bookissued!
   }
 
   type Query {
     users: [User]
+    getBooks: [Book]
   }
 `;
 
