@@ -5,8 +5,13 @@ const IssuedBook = require("../../component/bookIssued.model");
 const resolvers = {
   Query: {
     getBooks: async (parent, args, context, info) => {
-      const response = await Book.find({});
-      console.log("all books are", response);
+      const response = await Book.find({}).populate('issued_user');
+      for (let item of response) {
+        if (item.issued_user) {
+          item.issued_user.user_id = item.issued_user['_id'];
+        }
+      }
+      console.log("original", response);
       return response;
     },
   },
@@ -35,7 +40,8 @@ const resolvers = {
       const book = { book_id, user_id };
       await Book.findOneAndUpdate(
         { _id: book_id },
-        { is_issued: true },
+        { is_issued: true,
+          issued_user: user_id },
         { new: true }
       );
       const response = await IssuedBook.create(book);

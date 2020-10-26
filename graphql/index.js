@@ -19,6 +19,7 @@ const typeDefs = gql`
     book_id: String
     author: String
     category: String
+    issued_user: User
   }
 
   type Bookissued {
