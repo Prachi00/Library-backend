@@ -36,7 +36,7 @@ const typeDefs = gql`
 
   type Query {
     users: [User]
-    getBooks: [Book]
+    getBooks(type: String, search: String, page: Int, limit: Int): [Book]
   }
 `;
 

@@ -5,10 +5,39 @@ const IssuedBook = require("../../component/bookIssued.model");
 const resolvers = {
   Query: {
     getBooks: async (parent, args, context, info) => {
-      const response = await Book.find({}).populate('issued_user');
+      const { search = null, type } = args;
+      let searchQuery = {};
+      if (search) {
+        switch (type) {
+          case "NAME":
+            searchQuery = {
+              $or: [{ name: { $regex: search, $options: "i" } }],
+            };
+            break;
+          case "AUTHOR":
+            searchQuery = {
+              $or: [{ author: { $regex: search, $options: "i" } }],
+            };
+            break;
+          case "CATEGORY":
+            searchQuery = {
+              $or: [{ category: { $regex: search, $options: "i" } }],
+            };
+            break;
+          default:
+            searchQuery = {
+              $or: [
+                { name: { $regex: search, $options: "i" } },
+                { author: { $regex: search, $options: "i" } },
+                { category: { $regex: search, $options: "i" } },
+              ],
+            };
+        }
+      }
+      const response = await Book.find(searchQuery).populate("issued_user");
       for (let item of response) {
         if (item.issued_user) {
-          item.issued_user.user_id = item.issued_user['_id'];
+          item.issued_user.user_id = item.issued_user["_id"];
         }
       }
       console.log("original", response);
@@ -40,8 +69,7 @@ const resolvers = {
       const book = { book_id, user_id };
       await Book.findOneAndUpdate(
         { _id: book_id },
-        { is_issued: true,
-          issued_user: user_id },
+        { is_issued: true, issued_user: user_id },
         { new: true }
       );
       const response = await IssuedBook.create(book);
