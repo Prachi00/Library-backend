@@ -1,6 +1,7 @@
 const User = require("../../component/user.model");
 const Book = require("../../component/book.model");
 const IssuedBook = require("../../component/bookIssued.model");
+const Logs = require("../../component/logs.model");
 
 const resolvers = {
   Query: {
@@ -73,7 +74,15 @@ const resolvers = {
         { new: true }
       );
       const response = await IssuedBook.create(book);
-      console.log("book issued is", response);
+      let logsObj = {
+        user_id: response.user_id,
+        datetime: response.createdAt,
+        book: bookData.name,
+        book_id: response.book_id
+        
+      }
+      const logsRes = await Logs.create(logsObj);
+      console.log("logs is", logsRes);
       book.date = response.createdAt;
       return book;
     },
