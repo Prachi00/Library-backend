@@ -63,10 +63,17 @@ const resolvers = {
     },
     issueBook: async (parent, { book_id, user_id }, context, info) => {
       const bookData = await Book.findOne({ _id: book_id });
-      console.log(bookData);
+      let userData = await User.find({ _id: user_id });
+      let count = userData[0].count;
+      /* this is 4 as count is updated later in the code */
+      if (count > 4) {
+        throw new Error("You cant have more than 5 books whoopsie");
+      }
+      /* if book is already issued */
       if (bookData.is_issued) {
         throw new Error("This book isnt available");
       }
+      /* set is issued to true as book is issued */
       const book = { book_id, user_id };
       await Book.findOneAndUpdate(
         { _id: book_id },
@@ -74,15 +81,22 @@ const resolvers = {
         { new: true }
       );
       const response = await IssuedBook.create(book);
+
+      /* update book count in users collection */
+      const resUserCount = await User.findOneAndUpdate(
+        { _id: user_id },
+        { count: count + 1 },
+        { new: true }
+      );
+
+      /* create logs */
       let logsObj = {
         user_id: response.user_id,
         datetime: response.createdAt,
         book: bookData.name,
-        book_id: response.book_id
-        
-      }
+        book_id: response.book_id,
+      };
       const logsRes = await Logs.create(logsObj);
-      console.log("logs is", logsRes);
       book.date = response.createdAt;
       return book;
     },

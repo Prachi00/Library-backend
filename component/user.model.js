@@ -12,6 +12,9 @@ const User = new mongoose.Schema(
     phone: {
       type: Number,
     },
+    count: {
+      type: Number,
+    },
   },
   { timestamps: true }
 );
