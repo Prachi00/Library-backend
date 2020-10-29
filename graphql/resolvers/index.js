@@ -100,6 +100,27 @@ const resolvers = {
       book.date = response.createdAt;
       return book;
     },
+    returnBook: async (parent, { book_id, user_id }, context, info) => {
+      let userData = await User.find({ _id: user_id });
+      let count = userData[0].count;
+
+      const res = await Book.findOneAndUpdate(
+        { _id: book_id },
+        { is_issued: false, issued_user: undefined },
+        { new: true }
+      );
+      const deletedRes = await IssuedBook.findOneAndDelete({ book_id: book_id });
+      console.log(deletedRes);
+      if (deletedRes) {
+        const resUserCount = await User.findOneAndUpdate(
+          { _id: user_id },
+          { count: count - 1 },
+          { new: true }
+        );
+      }
+
+      return "deleted succesfully";
+    },
   },
 };
 

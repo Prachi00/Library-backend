@@ -32,6 +32,7 @@ const typeDefs = gql`
     createUser(name: String, email: String, phone: Int): User!
     addBook(name: String, author: String, category: String): Book!
     issueBook(user_id: String, book_id: String): Bookissued!
+    returnBook(user_id: String, book_id: String): Bookissued
   }
 
   type Query {
