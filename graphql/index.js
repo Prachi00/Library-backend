@@ -26,12 +26,13 @@ const typeDefs = gql`
     book_id: String
     user_id: String
     date: String
+    email: String
   }
 
   type Mutation {
     createUser(name: String, email: String, phone: Int): User!
     addBook(name: String, author: String, category: String): Book!
-    issueBook(user_id: String, book_id: String, reserve: Boolean): Bookissued!
+    issueBook(user_id: String, book_id: String): Bookissued!
     returnBook(user_id: String, book_id: String): Bookissued
     reserveBook(user_id: String, book_id: String, reserve: Boolean): Bookissued!
   }

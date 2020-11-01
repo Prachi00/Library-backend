@@ -7,7 +7,10 @@ const booksIssued = new mongoose.Schema(
     },
     user_id: {
       type: String,
-    }
+    },
+    email: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

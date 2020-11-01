@@ -6,6 +6,9 @@ var logger = require('morgan');
 const apolloServer = require('./loaders/apollo-server');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+let cron = require('node-cron');
+let cronFunc = require('./cron');
+
 const connectMongoose = require('./loaders/mongoose');
 
 var app = express();
@@ -39,6 +42,12 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
+});
+
+
+cron.schedule('* * * * *', () => {
+   console.log('running a task every minute');
+   cronFunc();
 });
 
 module.exports = app;

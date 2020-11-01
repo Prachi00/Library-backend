@@ -8,6 +8,7 @@ async function issueBookFun(book_id, user_id) {
   const bookData = await Book.findOne({ _id: book_id });
   console.log("bookData", bookData, book_id);
   let userData = await User.find({ _id: user_id });
+  console.log('userdata is', userData);
   let count = userData.length && userData[0].count ? userData[0].count : 0;
   /* this is 4 as count is updated later in the code */
   if (count > 4) {
@@ -18,7 +19,7 @@ async function issueBookFun(book_id, user_id) {
     throw new Error("This book isnt available");
   }
   /* set is issued to true as book is issued */
-  const book = { book_id, user_id };
+  const book = { book_id, user_id, email : userData[0].email };
   await Book.findOneAndUpdate(
     { _id: book_id },
     { is_issued: true, issued_user: user_id },
